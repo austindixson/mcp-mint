@@ -4,7 +4,7 @@ import { createCli } from '../src/cli.js';
 describe('CLI', () => {
   it('should create a CLI program', () => {
     const cli = createCli();
-    expect(cli.name()).toBe('mcp-forge');
+    expect(cli.name()).toBe('mcp-mint');
   });
 
   it('should have test command', () => {
@@ -17,6 +17,21 @@ describe('CLI', () => {
     const cli = createCli();
     const initCmd = cli.commands.find((c) => c.name() === 'init');
     expect(initCmd).toBeDefined();
+  });
+
+  it('should have validate command', () => {
+    const cli = createCli();
+    expect(cli.commands.find((c) => c.name() === 'validate')).toBeDefined();
+  });
+
+  it('should have doctor command', () => {
+    const cli = createCli();
+    expect(cli.commands.find((c) => c.name() === 'doctor')).toBeDefined();
+  });
+
+  it('should have ci command', () => {
+    const cli = createCli();
+    expect(cli.commands.find((c) => c.name() === 'ci')).toBeDefined();
   });
 
   it('should have version set', () => {

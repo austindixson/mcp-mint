@@ -22,6 +22,57 @@ describe('Security Scanner', () => {
       expect(match).toBe(true);
     });
 
+    it('should detect Stripe secret keys', () => {
+      // Use sk_live_ prefix with enough random chars to match pattern
+      const prefix = 'sk_live_';
+      const suffix = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+      const text = `key: ${prefix}${suffix}`;
+      const match = SECRET_PATTERNS.some((p) => p.pattern.test(text));
+      expect(match).toBe(true);
+    });
+
+    it('should detect JWT tokens', () => {
+      const text = 'token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U';
+      const match = SECRET_PATTERNS.some((p) => p.pattern.test(text));
+      expect(match).toBe(true);
+    });
+
+    it('should detect Supabase/JWT anon keys', () => {
+      const text = 'key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMH0.abc123';
+      const match = SECRET_PATTERNS.some((p) => p.pattern.test(text));
+      expect(match).toBe(true);
+    });
+
+    it('should detect MongoDB connection strings', () => {
+      const text = 'uri: mongodb+srv://admin:p4ssw0rd@cluster0.abc.mongodb.net';
+      const match = SECRET_PATTERNS.some((p) => p.pattern.test(text));
+      expect(match).toBe(true);
+    });
+
+    it('should detect PostgreSQL connection strings', () => {
+      const text = 'url: postgresql://user:secret@db.example.com:5432/mydb';
+      const match = SECRET_PATTERNS.some((p) => p.pattern.test(text));
+      expect(match).toBe(true);
+    });
+
+    it('should detect SendGrid keys', () => {
+      const text = 'key: SG.abcdefghijklmnopqrstuv.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqr';
+      const match = SECRET_PATTERNS.some((p) => p.pattern.test(text));
+      expect(match).toBe(true);
+    });
+
+    it('should detect private keys (various types)', () => {
+      expect(SECRET_PATTERNS.some((p) => p.pattern.test('-----BEGIN RSA PRIVATE KEY-----'))).toBe(true);
+      expect(SECRET_PATTERNS.some((p) => p.pattern.test('-----BEGIN OPENSSH PRIVATE KEY-----'))).toBe(true);
+      expect(SECRET_PATTERNS.some((p) => p.pattern.test('-----BEGIN EC PRIVATE KEY-----'))).toBe(true);
+    });
+
+    it('should detect passwords in URLs', () => {
+      const text = 'endpoint: https://admin:supersecretpassword@api.example.com/v1';
+      const match = SECRET_PATTERNS.some((p) => p.pattern.test(text));
+      expect(match).toBe(true);
+    });
+
     it('should not flag normal text', () => {
       const text = 'The weather in San Francisco is sunny today.';
       const match = SECRET_PATTERNS.some((p) => p.pattern.test(text));

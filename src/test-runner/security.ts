@@ -12,14 +12,46 @@ interface SecretPattern {
 }
 
 export const SECRET_PATTERNS: readonly SecretPattern[] = [
+  // Cloud providers
   { name: 'AWS Access Key', pattern: /AKIA[0-9A-Z]{16}/ },
-  { name: 'GitHub Token', pattern: /ghp_[A-Za-z0-9_]{36,}/ },
-  { name: 'GitHub OAuth', pattern: /gho_[A-Za-z0-9_]{36,}/ },
-  { name: 'Slack Token', pattern: /xox[bpors]-[A-Za-z0-9-]+/ },
-  { name: 'Generic API Key', pattern: /(?:api[_-]?key|api[_-]?secret|access[_-]?token)\s*[=:]\s*\S{10,}/i },
-  { name: 'Private Key', pattern: /-----BEGIN (?:RSA |EC )?PRIVATE KEY-----/ },
+  { name: 'AWS Secret Key', pattern: /(?:aws_secret_access_key|aws_secret)\s*[=:]\s*[A-Za-z0-9/+=]{40}/i },
+  { name: 'GCP Service Account', pattern: /"type"\s*:\s*"service_account"/ },
+  { name: 'Azure Storage Key', pattern: /DefaultEndpointsProtocol=https;AccountName=[^;]+;AccountKey=[A-Za-z0-9+/=]{88}/ },
+
+  // AI providers
   { name: 'Anthropic Key', pattern: /sk-ant-[A-Za-z0-9_-]{20,}/ },
   { name: 'OpenAI Key', pattern: /sk-[A-Za-z0-9]{20,}/ },
+  { name: 'Google AI Key', pattern: /AIzaSy[A-Za-z0-9_-]{33}/ },
+
+  // Git platforms
+  { name: 'GitHub Token', pattern: /ghp_[A-Za-z0-9_]{36,}/ },
+  { name: 'GitHub OAuth', pattern: /gho_[A-Za-z0-9_]{36,}/ },
+  { name: 'GitLab Token', pattern: /glpat-[A-Za-z0-9_-]{20,}/ },
+
+  // Payment
+  { name: 'Stripe Secret Key', pattern: /sk_live_[A-Za-z0-9]{24,}/ },
+  { name: 'Stripe Restricted Key', pattern: /rk_live_[A-Za-z0-9]{24,}/ },
+
+  // Database
+  { name: 'Supabase Key', pattern: /eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[A-Za-z0-9_-]{50,}/ },
+  { name: 'MongoDB Connection String', pattern: /mongodb\+srv:\/\/[^:]+:[^@]+@/ },
+  { name: 'PostgreSQL Connection String', pattern: /postgres(?:ql)?:\/\/[^:]+:[^@]+@/ },
+
+  // Communication
+  { name: 'Slack Token', pattern: /xox[bpors]-[A-Za-z0-9-]+/ },
+  { name: 'Slack Webhook', pattern: /hooks\.slack\.com\/services\/T[A-Z0-9]+\/B[A-Z0-9]+\/[A-Za-z0-9]+/ },
+  { name: 'SendGrid Key', pattern: /SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}/ },
+  { name: 'Twilio Key', pattern: /SK[a-f0-9]{32}/ },
+  { name: 'Mailgun Key', pattern: /key-[A-Za-z0-9]{32}/ },
+
+  // Auth
+  { name: 'JWT Token', pattern: /eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/ },
+  { name: 'Private Key', pattern: /-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----/ },
+  { name: 'Bearer Token', pattern: /[Bb]earer\s+[A-Za-z0-9_-]{20,}/ },
+
+  // Generic
+  { name: 'Generic API Key', pattern: /(?:api[_-]?key|api[_-]?secret|access[_-]?token|secret[_-]?key)\s*[=:]\s*\S{10,}/i },
+  { name: 'Password in URL', pattern: /https?:\/\/[^:]+:[^@]{8,}@/ },
 ];
 
 const SSRF_PATTERNS: readonly { readonly name: string; readonly pattern: RegExp; readonly severity: Severity }[] = [

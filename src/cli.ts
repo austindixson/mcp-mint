@@ -8,6 +8,7 @@ import {
   validateToolCallResult,
 } from './test-runner/protocol.js';
 import { scanToolResponse, scanToolDefinition } from './test-runner/security.js';
+import { computeLatencyStats, gradeLatency } from './test-runner/performance.js';
 import { formatReport } from './utils/logger.js';
 import type { McpServerConfig, TestSuiteResult, TestResult } from './types/index.js';
 
@@ -15,7 +16,7 @@ export function createCli(): Command {
   const program = new Command();
 
   program
-    .name('mcp-forge')
+    .name('mcp-mint')
     .description('Build, test, and publish MCP servers')
     .version('0.1.0');
 
@@ -25,8 +26,9 @@ export function createCli(): Command {
     .argument('<command>', 'Command to start the MCP server')
     .argument('[args...]', 'Arguments for the server command')
     .option('--timeout <ms>', 'Startup timeout in ms', '10000')
-    .option('--suite <suites>', 'Comma-separated suites: schema,protocol,security,performance', 'schema,protocol,security')
+    .option('--suite <suites>', 'Comma-separated suites: schema,protocol,security,performance', 'schema,protocol,security,performance')
     .option('--json', 'Output results as JSON')
+    .option('--html <file>', 'Write HTML report to file (like Lighthouse)')
     .action(async (command: string, args: string[], options) => {
       const config: McpServerConfig = {
         command,
@@ -44,6 +46,13 @@ export function createCli(): Command {
           console.log(JSON.stringify(report, null, 2));
         } else {
           console.log(formatReport(report));
+        }
+
+        if (options.html) {
+          const { generateHtmlReport } = await import('./utils/htmlReport.js');
+          const { writeFileSync } = await import('node:fs');
+          writeFileSync(options.html, generateHtmlReport(report), 'utf-8');
+          console.log(chalk.green(`\nHTML report written to ${options.html}`));
         }
 
         const exitCode = report.summary.failed > 0 ? 1 : 0;
@@ -92,6 +101,47 @@ export function createCli(): Command {
       }
     });
 
+  program
+    .command('doctor')
+    .description('Diagnose common MCP server issues')
+    .argument('<command>', 'Command to start the MCP server')
+    .argument('[args...]', 'Arguments for the server command')
+    .action(async (command: string, args: string[]) => {
+      try {
+        const { diagnose } = await import('./doctor.js');
+        const config: McpServerConfig = { command, args };
+        console.log(chalk.bold('\nMCP Mint Doctor\n'));
+        const results = await diagnose(config);
+        for (const r of results) {
+          const icon = r.status === 'pass' ? chalk.green('PASS') : r.status === 'fail' ? chalk.red('FAIL') : chalk.yellow('WARN');
+          console.log(`  ${icon}  ${r.name}: ${r.message}`);
+        }
+        const failed = results.filter((r) => r.status === 'fail').length;
+        console.log(failed > 0 ? chalk.red(`\n${failed} issue(s) found.`) : chalk.green('\nAll checks passed.'));
+        process.exit(failed > 0 ? 1 : 0);
+      } catch (err) {
+        console.error(chalk.red(`Error: ${err instanceof Error ? err.message : String(err)}`));
+        process.exit(2);
+      }
+    });
+
+  program
+    .command('ci')
+    .description('Add GitHub Actions workflow for MCP server testing')
+    .argument('<command>', 'Command to start the MCP server')
+    .argument('[args...]', 'Arguments for the server command')
+    .option('--dir <path>', 'Project directory', '.')
+    .action(async (command: string, args: string[], options) => {
+      try {
+        const { writeCiWorkflow } = await import('./ci.js');
+        writeCiWorkflow(options.dir, command, args);
+        console.log(chalk.green('CI workflow created at .github/workflows/mcp-mint.yml'));
+      } catch (err) {
+        console.error(chalk.red(`Error: ${err instanceof Error ? err.message : String(err)}`));
+        process.exit(2);
+      }
+    });
+
   return program;
 }
 
@@ -121,6 +171,10 @@ async function runTests(
 
     if (suites.includes('security')) {
       results.push(await runSecuritySuite(client));
+    }
+
+    if (suites.includes('performance')) {
+      results.push(await runPerformanceSuite(client));
     }
   } finally {
     if (client) {
@@ -152,7 +206,7 @@ async function connectToServer(config: McpServerConfig): Promise<McpClientWrappe
   });
 
   const client = new Client(
-    { name: 'mcp-forge', version: '0.1.0' },
+    { name: 'mcp-mint', version: '0.1.0' },
     { capabilities: {} },
   );
 
@@ -284,4 +338,53 @@ async function runSecuritySuite(client: McpClientWrapper): Promise<TestSuiteResu
   }
 
   return { suite: 'Security Scan', results, durationMs: Date.now() - start };
+}
+
+const PERF_ITERATIONS = 5;
+
+async function runPerformanceSuite(client: McpClientWrapper): Promise<TestSuiteResult> {
+  const start = Date.now();
+  const results: TestResult[] = [];
+
+  try {
+    const { tools } = await client.listTools();
+
+    if (tools.length === 0) {
+      results.push({
+        name: 'perf.tools',
+        status: 'skip',
+        severity: 'info',
+        message: 'No tools to benchmark',
+      });
+      return { suite: 'Performance', results, durationMs: Date.now() - start };
+    }
+
+    // Benchmark each tool with empty/minimal args
+    for (const tool of tools) {
+      const toolName = (tool as Record<string, unknown>).name as string;
+      const samples: number[] = [];
+
+      for (let i = 0; i < PERF_ITERATIONS; i++) {
+        const t0 = performance.now();
+        try {
+          await client.callTool(toolName, {});
+        } catch {
+          // Tool may error with empty args — that's fine, we're measuring latency
+        }
+        samples.push(performance.now() - t0);
+      }
+
+      const stats = computeLatencyStats(samples);
+      results.push(gradeLatency(toolName, stats));
+    }
+  } catch (err) {
+    results.push({
+      name: 'perf.benchmark',
+      status: 'fail',
+      severity: 'high',
+      message: `Performance benchmark failed: ${err instanceof Error ? err.message : String(err)}`,
+    });
+  }
+
+  return { suite: 'Performance', results, durationMs: Date.now() - start };
 }
