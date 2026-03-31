@@ -67,3 +67,14 @@ export function gradeLatency(
     durationMs: stats.mean,
   };
 }
+
+/**
+ * Convenience wrapper that handles empty arrays gracefully.
+ * Returns zero-stats for empty input instead of throwing.
+ */
+export function measurePerformance(samples: readonly number[]): LatencyStats {
+  if (samples.length === 0) {
+    return { min: 0, max: 0, mean: 0, p50: 0, p95: 0, p99: 0 };
+  }
+  return computeLatencyStats(samples);
+}

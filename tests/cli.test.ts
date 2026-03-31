@@ -36,6 +36,6 @@ describe('CLI', () => {
 
   it('should have version set', () => {
     const cli = createCli();
-    expect(cli.version()).toBe('0.1.0');
+    expect(cli.version()).toBe('0.1.1');
   });
 });

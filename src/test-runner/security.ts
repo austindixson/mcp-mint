@@ -186,5 +186,22 @@ export function scanToolDefinition(
     }
   }
 
+  // NEW: Also scan tool description for secrets
+  if (tool.description) {
+    for (const secret of SECRET_PATTERNS) {
+      if (secret.pattern.test(tool.description)) {
+        findings.push(
+          finding(
+            'secrets',
+            'critical',
+            tool.name,
+            `Possible ${secret.name} detected in tool description`,
+            tool.description.slice(0, 200),
+          ),
+        );
+      }
+    }
+  }
+
   return findings;
 }
