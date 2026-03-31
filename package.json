@@ -1,6 +1,6 @@
 {
   "name": "mcp-mint",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Test, validate, and scaffold MCP servers. ESLint + Lighthouse for the Model Context Protocol.",
   "type": "module",
   "keywords": ["mcp", "model-context-protocol", "testing", "linting", "security", "ai", "claude", "cursor"],

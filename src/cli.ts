@@ -18,7 +18,7 @@ export function createCli(): Command {
   program
     .name('mcp-mint')
     .description('Build, test, and publish MCP servers')
-    .version('0.1.0');
+    .version('0.1.1');
 
   program
     .command('test')
