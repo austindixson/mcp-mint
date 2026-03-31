@@ -1,5 +1,5 @@
 /**
- * mcp-forge doctor — diagnose MCP server configuration issues.
+ * mcp-mint doctor — diagnose MCP server configuration issues.
  *
  * Runs a series of checks against a server config and returns
  * a readonly array of TestResult (never throws).
@@ -169,11 +169,11 @@ async function checkMcpHandshake(config: McpServerConfig): Promise<TestResult> {
       command: config.command,
       args: [...config.args],
       cwd: config.cwd,
-      env: config.env ? { ...process.env, ...config.env } : undefined,
+      env: config.env ? { ...process.env, ...config.env } as Record<string, string> : undefined,
     });
 
     const client = new Client(
-      { name: 'mcp-forge-doctor', version: '0.1.0' },
+      { name: 'mcp-mint-doctor', version: '0.1.0' },
       { capabilities: {} },
     );
 

@@ -8,7 +8,7 @@ describe('Validate (offline mode)', () => {
   let tempDir: string;
 
   beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'mcp-forge-validate-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'mcp-mint-validate-'));
   });
 
   afterEach(() => {

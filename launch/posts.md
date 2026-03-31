@@ -55,7 +55,7 @@ Output looks something like:
 
 The test suite has 91+ tests at 99% coverage. It's not trying to be a framework or a platform -- just a focused testing tool you run before you ship.
 
-GitHub: https://github.com/austindixson/mcp-forge
+GitHub: https://github.com/austindixson/mcp-mint
 
 Happy to answer questions about the implementation or MCP testing in general.
 
@@ -139,7 +139,7 @@ It's free, it's open source, it's on npm:
 npm install -g mcp-mint
 ```
 
-GitHub: github.com/austindixson/mcp-forge
+GitHub: github.com/austindixson/mcp-mint
 
 If you're building MCP servers, give it a run and let me know what it catches. PRs welcome.
 
@@ -171,7 +171,7 @@ This is relevant for the local LLM crowd because as more people build tool-calli
 
 Install: `npm install -g mcp-mint`
 
-GitHub: https://github.com/austindixson/mcp-forge
+GitHub: https://github.com/austindixson/mcp-mint
 
 91+ tests, 99% coverage on the tool itself. Would appreciate feedback from anyone building MCP integrations for local setups.
 
@@ -211,7 +211,7 @@ Other useful commands:
 
 I've been using this on my own MCP servers for Claude Code and it's caught issues I would have spent hours debugging otherwise. The `doctor` command alone has saved me a lot of headaches with connection problems.
 
-GitHub: https://github.com/austindixson/mcp-forge
+GitHub: https://github.com/austindixson/mcp-mint
 npm: `npm install -g mcp-mint`
 
 Would love feedback from anyone else building MCP tools for Claude.
@@ -241,7 +241,7 @@ It catches stuff like:
 
 There's also `mcp-mint doctor` for debugging connection issues, `mcp-mint validate` for offline manifest checking, and `mcp-mint init` to scaffold new servers from templates.
 
-GitHub: https://github.com/austindixson/mcp-forge
+GitHub: https://github.com/austindixson/mcp-mint
 
 Still actively working on it -- happy to hear what checks would be most useful to add. If you run into issues, feel free to open an issue or ping me here.
 
@@ -254,7 +254,7 @@ Still actively working on it -- happy to hear what checks would be most useful t
 **List entry:**
 
 ```markdown
-- [mcp-mint](https://github.com/austindixson/mcp-forge) - CLI testing tool that grades MCP servers A-F for schema compliance, protocol correctness, and security. Detects 26 secret patterns, SSRF, path traversal, and command injection. Includes server scaffolding, CI injection, and offline manifest validation.
+- [mcp-mint](https://github.com/austindixson/mcp-mint) - CLI testing tool that grades MCP servers A-F for schema compliance, protocol correctness, and security. Detects 26 secret patterns, SSRF, path traversal, and command injection. Includes server scaffolding, CI injection, and offline manifest validation.
 ```
 
 **PR Title:** Add mcp-mint to Testing/Developer Tools

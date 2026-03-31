@@ -44,5 +44,5 @@ export async function scaffold(name: string, templateType: string): Promise<void
   console.log(`  npm install`);
   console.log(`  npm run dev`);
   console.log(`\nTest your server:`);
-  console.log(`  mcp-forge test node dist/index.js`);
+  console.log(`  mcp-mint test node dist/index.js`);
 }

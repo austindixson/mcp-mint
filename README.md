@@ -7,7 +7,7 @@ MCP Forge checks your MCP server for protocol compliance, schema correctness, an
 ## Install
 
 ```bash
-npm install -g mcp-forge
+npm install -g mcp-mint
 ```
 
 ## Quick Start
@@ -16,15 +16,15 @@ npm install -g mcp-forge
 
 ```bash
 # Test any MCP server that communicates over stdio
-mcp-forge test node my-server.js
-mcp-forge test python3 server.py
-mcp-forge test npx tsx src/index.ts
+mcp-mint test node my-server.js
+mcp-mint test python3 server.py
+mcp-mint test npx tsx src/index.ts
 
 # Choose specific test suites
-mcp-forge test node server.js --suite schema,security
+mcp-mint test node server.js --suite schema,security
 
 # Output as JSON (for CI pipelines)
-mcp-forge test node server.js --json
+mcp-mint test node server.js --json
 ```
 
 ### Validate offline (no server needed)
@@ -52,21 +52,21 @@ Create a `manifest.json` describing your tools:
 ```
 
 ```bash
-mcp-forge validate manifest.json
-mcp-forge validate manifest.json --json
+mcp-mint validate manifest.json
+mcp-mint validate manifest.json --json
 ```
 
 ### Scaffold a new MCP server
 
 ```bash
 # REST API wrapper (default)
-mcp-forge init my-api-server --template rest-api
+mcp-mint init my-api-server --template rest-api
 
 # Database connector
-mcp-forge init my-db-server --template database
+mcp-mint init my-db-server --template database
 
 # File system tools
-mcp-forge init my-fs-server --template filesystem
+mcp-mint init my-fs-server --template filesystem
 ```
 
 Each template includes TypeScript, MCP SDK, and a working server you can run immediately.
@@ -107,7 +107,7 @@ Every test run produces a grade from **A** to **F**:
 
 ```yaml
 - name: Test MCP Server
-  run: npx mcp-forge test node dist/server.js --json > mcp-report.json
+  run: npx mcp-mint test node dist/server.js --json > mcp-report.json
 
 - name: Check grade
   run: |
@@ -121,8 +121,8 @@ Every test run produces a grade from **A** to **F**:
 ## Development
 
 ```bash
-git clone https://github.com/your-org/mcp-forge.git
-cd mcp-forge
+git clone https://github.com/your-org/mcp-mint.git
+cd mcp-mint
 npm install
 npm test                    # 91 tests
 npx vitest run --coverage   # 98%+ coverage

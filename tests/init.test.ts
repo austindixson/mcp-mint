@@ -5,12 +5,12 @@ import { scaffold } from '../src/init/index.js';
 import { tmpdir } from 'node:os';
 import { mkdtempSync } from 'node:fs';
 
-describe('Scaffold (mcp-forge init)', () => {
+describe('Scaffold (mcp-mint init)', () => {
   let tempDir: string;
   const originalCwd = process.cwd();
 
   beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'mcp-forge-test-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'mcp-mint-test-'));
     process.chdir(tempDir);
   });
 

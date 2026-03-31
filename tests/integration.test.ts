@@ -22,7 +22,7 @@ describe('Integration: Echo Server', () => {
     });
 
     client = new Client(
-      { name: 'mcp-forge-test', version: '0.1.0' },
+      { name: 'mcp-mint-test', version: '0.1.0' },
       { capabilities: {} },
     );
 

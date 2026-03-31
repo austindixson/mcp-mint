@@ -1,5 +1,5 @@
 /**
- * mcp-forge ci — generate GitHub Actions CI workflow for MCP server testing.
+ * mcp-mint ci — generate GitHub Actions CI workflow for MCP server testing.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';

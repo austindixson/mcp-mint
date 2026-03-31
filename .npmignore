@@ -1,0 +1,9 @@
+tests/
+launch/
+coverage/
+src/
+.github/
+vitest.config.ts
+tsconfig.json
+*.ts
+!dist/**
