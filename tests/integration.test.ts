@@ -40,7 +40,8 @@ describe('Integration: Echo Server', () => {
   it('should connect and get valid server info', async () => {
     await connect();
     try {
-      const serverVersion = client.getServerVersion();
+      // getServerVersion() returns Implementation | undefined after connect()
+      const serverVersion = client.getServerVersion?.();
       expect(serverVersion).toBeDefined();
       expect(serverVersion?.name).toBe('echo-server');
       expect(serverVersion?.version).toBe('1.0.0');

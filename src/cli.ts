@@ -214,7 +214,21 @@ async function connectToServer(config: McpServerConfig): Promise<McpClientWrappe
 
   return {
     async initialize() {
-      return client.getServerVersion() as unknown as Record<string, unknown>;
+      // getServerVersion() returns Implementation | undefined after connect()
+      const serverVersion = client.getServerVersion?.();
+      const capabilities = client.getServerCapabilities?.();
+
+      // Ensure serverInfo has required fields
+      const serverInfo = serverVersion?.name && serverVersion?.version
+        ? serverVersion
+        : { name: 'unknown', version: 'unknown' };
+
+      // Use latest protocol version from SDK
+      return {
+        protocolVersion: '2025-03-26',
+        serverInfo,
+        capabilities: capabilities || {},
+      } as unknown as Record<string, unknown>;
     },
     async listTools() {
       const result = await client.listTools();

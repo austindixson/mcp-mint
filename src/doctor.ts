@@ -184,7 +184,8 @@ async function checkMcpHandshake(config: McpServerConfig): Promise<TestResult> {
 
     await Promise.race([connectPromise, timeoutPromise]);
 
-    const serverVersion = client.getServerVersion();
+    // getServerVersion() returns Implementation | undefined after connect()
+    const serverVersion = client.getServerVersion?.();
     const serverName = serverVersion?.name ?? 'unknown';
 
     try { await client.close(); } catch { /* ignore */ }
